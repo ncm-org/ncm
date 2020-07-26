@@ -2,7 +2,7 @@
 <!--<script src="assets/asciinema-player.js"></script>-->
 
 #### NCM是什么？
-- <font color="#dd0000" size="5">N</font>ice <font color="#dd0000" size="5">C</font>ommit <font color="#dd0000" size="5">M</font>essage
+- `N`ice `C`ommit `M`essage
 - 用于校验 `git commit message` 是否合符[`约定式提交`](https://www.conventionalcommits.org/zh-hans/v1.0.0-beta.4/)规范。
 - 生成符合[`约定式提交`](https://www.conventionalcommits.org/zh-hans/v1.0.0-beta.4/)规范的`git commit message`。
 
