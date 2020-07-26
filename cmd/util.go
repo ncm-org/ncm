@@ -45,7 +45,14 @@ func getGitRootPath() (string, error) {
 	// git rev-parse --show-toplevel
 	command := exec.Command("git", "rev-parse", "--show-toplevel")
 	bs, err := command.CombinedOutput()
-	return strings.TrimSuffix(string(bs), "\n"), err
+	if err != nil {
+		return "", errors.New("not a git repository (or any of the parent directories): .git")
+	}
+	path := strings.TrimSuffix(string(bs), "\n")
+	if len(path) == 0 {
+		return "", errors.New("not a git repository (or any of the parent directories): .git")
+	}
+	return path, nil
 }
 
 func getGitHookPath(name string) (bool, string, error) {
@@ -56,9 +63,6 @@ func getGitHookPath(name string) (bool, string, error) {
 	path, err = getGitRootPath()
 	if err != nil {
 		return false, "", errors.New(path)
-	}
-	if len(path) == 0 {
-		return false, "", errors.New("not a git repository (or any of the parent directories): .git")
 	}
 
 	path = fmt.Sprintf("%s/.git/hooks/%s", path, name)
@@ -74,9 +78,6 @@ func getGitCommitEditMsgPath() (string, error) {
 	path, err = getGitRootPath()
 	if err != nil {
 		return "", errors.New(path)
-	}
-	if len(path) == 0 {
-		return "", errors.New("not a git repository (or any of the parent directories): .git")
 	}
 
 	path = fmt.Sprintf("%s/.git/COMMIT_EDITMSG", path)

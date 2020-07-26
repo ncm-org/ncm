@@ -25,6 +25,13 @@ var typeOptions = []string{
 }
 
 func ncm(paths []string) {
+	// check git repository
+	_, err := getGitRootPath()
+	if err != nil {
+		handleError(err)
+		return
+	}
+
 	// the 'add' method calls the 'ncm' method,
 	// and the length of paths is not 0.
 	// in this case, submission is allowed
@@ -33,7 +40,6 @@ func ncm(paths []string) {
 		return
 	}
 
-	var err error
 	var tn string
 	var scope string
 	var shortMessage string
