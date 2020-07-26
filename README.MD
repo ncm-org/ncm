@@ -123,7 +123,7 @@
    ![ncm info](assets/ncm_info.gif)
    <!--<asciinema-player width=100% poster="npt:0:3" src="assets/ncm_info.json" />-->
 
-   |  <img src="./assets/qr_popo_group.png" width="180" height="180" alt="qr_popo_group"/>  | <img src="./assets/qr_popo_group.png" width="180" height="180" alt="qr_wechat_group"/> |
+   |  <img src="./assets/qr_popo_group.png" width="180" height="180" alt="qr_popo_group"/>  | <img src="./assets/qr_wechat_group.png" width="180" height="180" alt="qr_wechat_group"/> |
    |  :--:  | :--:  |
    |**POPO**|**WeChat**|
    
