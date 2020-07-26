@@ -118,12 +118,15 @@
 
 5. ##### 意见反馈
 
-   POPO群号：1574363
-
    运行 `ncm info` 命令，复制输出的信息，粘贴到群里，并描述具体的问题。
 
    ![ncm info](assets/ncm_info.gif)
    <!--<asciinema-player width=100% poster="npt:0:3" src="assets/ncm_info.json" />-->
+
+   |  ![qr_popo_group](./assets/qr_popo_group.png)  | ![qr_wechat_group](./assets/qr_wechat_group.png) |
+   |  :--:  | :--:  |
+   |**POPO**|**WeChat**|
+   
 
 #### 小提示
 - 对于已经在合理合法使用可视化工具生成符合[`约定式提交`](https://www.conventionalcommits.org/zh-hans/v1.0.0-beta.4/)规范的个人、团队或者项目仍可继续使用该工具。为了进一步确保提交信息符合规范，可在项目中运行 `ncm init` 命令注入hook即可。
