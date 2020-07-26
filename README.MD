@@ -2,7 +2,7 @@
 <!--<script src="assets/asciinema-player.js"></script>-->
 
 #### NCM是什么？
-- `N`ice `C`ommit `M`essage
+- **N**ice **C**ommit **M**essage
 - 用于校验 `git commit message` 是否合符[`约定式提交`](https://www.conventionalcommits.org/zh-hans/v1.0.0-beta.4/)规范。
 - 生成符合[`约定式提交`](https://www.conventionalcommits.org/zh-hans/v1.0.0-beta.4/)规范的`git commit message`。
 
@@ -56,6 +56,8 @@
 #### NCM安装
 - `MacOS` `Linux` 系统运行以下命令，等待执行完成后运行 `ncm info` 验证是否安装成功。
 
+    > 安装命令的运行依赖与 `curl`  以及 `unzip`  , 请先确认系统是否安装了依赖工具。
+
     ```shell
     source <(curl -LkSs sh.ncm.ink)
     ```
@@ -65,7 +67,7 @@
 
 - `Windows` 系统参考如下步骤安装
 
-   1. [点击](http://t.cn/A6yDXJP1)进入程序发布页面，选择合适的zip文件进行下载，并解压到合适的目录。
+   1. 进入项目的发布页面，选择合适的zip文件进行下载，并解压到合适的目录。
 
    2. 将解压目录配置到环境变量中，以便于可以不带路径运行 `ncm` 。
 
