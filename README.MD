@@ -50,22 +50,33 @@
 - 安装方便，只需要将可执行文件配置在环境变量即可。
 - 在线升级，方便及时升级到最新版本。
 - 功能强大，一个程序即可实现提交、校验的功能。
-- 兼容性好，兼容 `git cz`，兼容 [`jetbrains`](https://www.jetbrains.com/) 的 [`Git Commit Template`](https://plugins.jetbrains.com/plugin/9861-git-commit-template) 插件
+- 兼容性好，兼容 `git cz`，兼容 [`jetbrains`](https://www.jetbrains.com/) 的 [`Git Commit Template`](https://plugins.jetbrains.com/plugin/9861-git-commit-template) 插件。
 
 #### NCM安装
-0. [点击](http://t.cn/A6yDXJP1)进入程序发布页面，选择合适的zip文件进行下载，并解压到合适的目录。
+- `MacOS` `Linux` 系统运行以下命令，等待执行完成后运行 `ncm info` 验证是否安装成功。
 
-1. 将解压目录配置到环境变量中。以便于可以不带路径运行 `ncm` 。
+    ```shell
+    source <(curl -LkSs sh.ncm.ink)
+    ```
 
-2. 运行 `ncm -v` 验证是否安装成功。
+    ![ncm install](assets/ncm_install.gif)
+    <!--<asciinema-player width=100% poster="npt:0:20" src="assets/ncm_install.json" />-->
+
+- `Windows` 系统参考如下步骤安装
+
+   1. [点击](http://t.cn/A6yDXJP1)进入程序发布页面，选择合适的zip文件进行下载，并解压到合适的目录。
+
+   2. 将解压目录配置到环境变量中。以便于可以不带路径运行 `ncm` 。
+
+   3. 运行 `ncm -v` 验证是否安装成功。
 
 #### NCM使用
-0. ##### NCM支持的所有命令
+1. ##### NCM支持的所有命令
 
    ![ncm help](assets/ncm_help.gif)
    <!--<asciinema-player width=100% poster="npt:0:4" src="assets/ncm_help.json" />-->
 
-1. ##### 使用NCM校验commit message
+2. ##### 使用NCM校验commit message
    在git项目中运行 `ncm init` 命令。此命令会在项目中的 `.git/hooks` 文件夹中生成内容为`ncm check`的`commit-msg` hook文件。有关`git commit-msg hook`的详细信息可点击[这里](https://git-scm.com/docs/githooks#_commit_msg)查阅。
 
    > 注意：如果项目中已经通过其他方式添加了 `commit-msg` 文件。则在运行命令后会提示是否覆盖文件，输入 `y/N` 进行选择。回车默认选择`N`，则在 `commit message` 时不会触发 `ncm` 的校验。
@@ -80,7 +91,7 @@
 
    > 如果之后不想使用此功能，可运行 `ncm uninit` 命令对 `commit-msg` hook进行移除。
 
-2. ##### 生成commit message信息并提交
+3. ##### 生成commit message信息并提交
    在需要 `commit` 时，请先使用 `git add` 命令，将需要提交的文件添加到暂存区，然后运行 `ncm` 命令 。此时会进入交互式模式。根据实际情况以及输出的提示，依次选择或填写相关信息。
 
    ![ncm](assets/ncm.gif)
@@ -96,13 +107,13 @@
    ![ncm add .](assets/ncm_add_all.gif)
    <!--<asciinema-player width=100% poster="npt:0:28" src="assets/ncm_add_all.json" />-->
 
-3. ##### 版本升级
+4. ##### 版本升级
    运行 `ncm upgrade`
 
    ![ncm upgrade](assets/ncm_upgrade.gif)
    <!--<asciinema-player width=100% poster="npt:0:7" src="assets/ncm_upgrade.json" />-->
 
-4. ##### 意见反馈
+5. ##### 意见反馈
 
    POPO群号：1574363
 
