@@ -59,6 +59,12 @@
     > 安装命令的运行依赖于 `curl`  以及 `unzip`  , 请先确认系统是否安装了依赖工具。
 
     ```shell
+    # MacOS
+    source /dev/stdin <<<"$(curl -LkSs sh.ncm.ink)"
+    ```
+
+    ```shell
+    # Linux
     source <(curl -LkSs sh.ncm.ink)
     ```
 
@@ -146,6 +152,7 @@
 - [**typicode/husky**](https://github.com/typicode/husky)
 - [**commitizen/cz-cli**](https://github.com/commitizen/cz-cli)
 - [**angular/angular.js**](https://github.com/angular/angular.js/blob/master/DEVELOPERS.md#-git-commit-guidelines)
+- [**AlecAivazis/survey**](https://github.com/AlecAivazis/survey)
 - [**schollz/progressbar**](https://github.com/schollz/progressbar)
 - [**conventionalcommits**](https://www.conventionalcommits.org)
 - [**goreleaser/goreleaser**](https://github.com/goreleaser/goreleaser)
