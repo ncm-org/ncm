@@ -68,6 +68,9 @@ func getGitHookPath(name string) (bool, string, error) {
 	path = fmt.Sprintf("%s/.git/hooks/%s", path, name)
 	path = filepath.FromSlash(path)
 	exists, err = pathExists(path)
+	if !exists && err == nil {
+		err = os.Mkdir(path, os.ModePerm)
+	}
 	return exists, path, err
 }
 
