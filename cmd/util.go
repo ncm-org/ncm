@@ -65,13 +65,23 @@ func getGitHookPath(name string) (bool, string, error) {
 		return false, "", errors.New(path)
 	}
 
-	path = fmt.Sprintf("%s/.git/hooks/%s", path, name)
-	path = filepath.FromSlash(path)
-	exists, err = pathExists(path)
+	hooksDirPath := fmt.Sprintf("%s/.git/hooks", path)
+	hooksDirPath = filepath.FromSlash(hooksDirPath)
+	exists, err = pathExists(hooksDirPath)
 	if !exists && err == nil {
-		err = os.Mkdir(path, os.ModePerm)
+		err = os.Mkdir(hooksDirPath, os.ModePerm)
 	}
-	return exists, path, err
+
+	hooksNamePath := fmt.Sprintf("%s/%s", hooksDirPath, name)
+	hooksNamePath = filepath.FromSlash(hooksNamePath)
+	exists, err = pathExists(hooksNamePath)
+	if exists && isDir(hooksNamePath) {
+		err = os.RemoveAll(hooksNamePath)
+		if err == nil {
+			exists, err = pathExists(hooksNamePath)
+		}
+	}
+	return exists, hooksNamePath, err
 }
 
 func getGitCommitEditMsgPath() (string, error) {
@@ -97,6 +107,14 @@ func pathExists(path string) (bool, error) {
 		return false, nil
 	}
 	return false, err
+}
+
+func isDir(path string) bool {
+	s, err := os.Stat(path)
+	if err != nil {
+		return false
+	}
+	return s.IsDir()
 }
 
 func parseReleaseDate(s string) string {
