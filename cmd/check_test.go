@@ -115,6 +115,21 @@ func TestCheckCase22(t *testing.T) {
 	doTestCheckCase(message)
 }
 
+func TestCheckCaseForMergeCommitMessage1(t *testing.T) {
+	message := "Merge remote-tracking branch 'origin/develop' into develop"
+	doTestCheckCase(message)
+}
+
+func TestCheckCaseForMergeCommitMessage2(t *testing.T) {
+	message := "Merge branch 'develop' of git@github.com:ncm-org/ncm.git into develop"
+	doTestCheckCase(message)
+}
+
+func TestCheckCaseForMergeCommitMessage3(t *testing.T) {
+	message := "Merge branch 'develop' into feature_develop"
+	doTestCheckCase(message)
+}
+
 func doTestCheckCase(message string) {
 	color.BgGray.Printf("commit message: %s\n", message)
 

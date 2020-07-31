@@ -58,9 +58,21 @@ func check() {
 }
 
 func checkMessage(message string) (errs []error) {
+	if isMergeCommitMessage(message) {
+		return nil
+	}
 	header := strings.Split(message, "\n")[0]
 	errs = append(errs, checkHeader(header)...)
 	return
+}
+
+// thanks:
+// https://github.com/conventional-changelog/commitlint/issues/365
+// https://github.com/conventional-changelog/commitlint/issues/417
+func isMergeCommitMessage(message string) bool {
+	pattern := "^((Merge pull request)|(Merge (.*?) into (.*?)|(Merge branch (.*?)))(?:\\r?\\n)*$)"
+	matched, err := regexp.MatchString(pattern, message)
+	return err == nil && matched
 }
 
 func checkHeader(header string) (errs []error) {
