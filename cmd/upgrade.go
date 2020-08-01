@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"archive/zip"
+	"crypto/sha256"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -156,7 +157,7 @@ func downloadLastestVersion(latest releasesLatest, savePath string, completed fu
 		progressbar.OptionShowCount(),
 		progressbar.OptionShowBytes(true),
 		progressbar.OptionEnableColorCodes(true),
-		progressbar.OptionSetDescription(fmt.Sprintf("Downloading: %s", latest.Name)),
+		progressbar.OptionSetDescription(fmt.Sprintf("downloading: %s", latest.Name)),
 		progressbar.OptionOnCompletion(completed),
 	)
 	_, err = io.Copy(io.MultiWriter(f, bar), resp.Body)
@@ -170,9 +171,31 @@ func downloadLastestVersion(latest releasesLatest, savePath string, completed fu
 // 4. if any error, remove `.bak` suffix
 func downloadSuccess(latest releasesLatest, zipPath string, appPath string) {
 	fmt.Println()
+	color.Green.Println("download success")
 
-	color.Green.Println("Download success")
-	fs, err := unzip(zipPath)
+	color.Green.Println("checksum ...")
+	var err error
+	var onlineSum string
+	onlineSum, err = getOnlineSum(latest)
+	if err != nil {
+		handleError(err)
+		return
+	}
+
+	var localSum string
+	localSum, err = getLocalSum(zipPath)
+	if err != nil {
+		handleError(err)
+		return
+	}
+
+	if !strings.EqualFold(onlineSum, localSum) {
+		handleError(errors.New("SHA256 don't match"))
+		return
+	}
+
+	var fs []string
+	fs, err = unzip(zipPath)
 	if err != nil {
 		handleError(err)
 		return
@@ -207,6 +230,62 @@ func downloadSuccess(latest releasesLatest, zipPath string, appPath string) {
 	}
 
 	color.Green.Printf("successfully upgraded to %s\n", latest.TagName)
+}
+
+func getDownloadName(latest releasesLatest) string {
+	for _, asset := range latest.Assets {
+		if strings.Contains(asset.BrowserDownloadURL, runtime.GOOS) && strings.Contains(asset.BrowserDownloadURL, runtime.GOARCH) {
+			return asset.Name
+		}
+	}
+	return ""
+}
+
+func getOnlineSum(latest releasesLatest) (string, error) {
+	checkSumsURL := fmt.Sprintf("https://github.com/ncm-org/ncm/releases/download/%s/checksums.txt", latest.TagName)
+	resp, err := http.Get(checkSumsURL)
+	if err != nil {
+		return "", err
+	}
+	defer func() {
+		if resp.Body != nil {
+			_ = resp.Body.Close()
+		}
+	}()
+
+	var bs []byte
+	bs, err = ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+
+	var name = getDownloadName(latest)
+	var result = string(bs)
+	var sums = strings.Split(result, "\n")
+	for _, sum := range sums {
+		if strings.Contains(sum, name) {
+			return strings.Split(sum, " ")[0], nil
+		}
+	}
+
+	return "", errors.New(fmt.Sprintf("%s is not in the %s", name, checkSumsURL))
+}
+
+func getLocalSum(path string) (string, error) {
+	f, err := os.Open(path)
+	if err != nil {
+		return "", err
+	}
+	defer func() {
+		_ = f.Close()
+	}()
+
+	h := sha256.New()
+	if _, err := io.Copy(h, f); err != nil {
+		return "", err
+	}
+
+	return fmt.Sprintf("%x", h.Sum(nil)), nil
 }
 
 func unzip(path string) ([]string, error) {
