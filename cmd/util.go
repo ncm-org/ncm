@@ -21,13 +21,12 @@ func addFileToGitStage(path string) string {
 	bs, err := command.CombinedOutput()
 	if err != nil {
 		return strings.TrimSuffix(string(bs), "\n")
-	} else {
-		return ""
 	}
+	return ""
 }
 
 func canGitCommit() bool {
-	//  git diff --name-only --exit-code --cached
+	// git diff --name-only --exit-code --cached
 	command := exec.Command("git", "diff", "--name-only", "--exit-code", "--cached")
 	bs, _ := command.CombinedOutput()
 	output := strings.TrimSuffix(string(bs), "\n")
