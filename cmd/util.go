@@ -62,7 +62,7 @@ func getGitHookPath(name string) (bool, string, error) {
 
 	path, err = getGitRootPath()
 	if err != nil {
-		return false, "", errors.New(path)
+		return false, "", err
 	}
 
 	hooksDirPath := fmt.Sprintf("%s/.git/hooks", path)
@@ -90,7 +90,7 @@ func getGitCommitEditMsgPath() (string, error) {
 
 	path, err = getGitRootPath()
 	if err != nil {
-		return "", errors.New(path)
+		return "", err
 	}
 
 	path = fmt.Sprintf("%s/.git/COMMIT_EDITMSG", path)
