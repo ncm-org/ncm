@@ -10,7 +10,7 @@ var version = ""
 
 var rootCmd = &cobra.Command{
 	Use:     "ncm",
-	Short:   "message generation and verification of git commit",
+	Short:   "Generation and verification of git commit message",
 	Version: version,
 	Run: func(cmd *cobra.Command, args []string) {
 		ncm(args)
