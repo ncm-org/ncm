@@ -101,7 +101,7 @@ func getLatestVersion() (releasesLatest, error) {
 		}
 		return latest, err
 	} else if resp.StatusCode == http.StatusNotFound {
-		return latest, errors.New(fmt.Sprintf("the %s is the latest version", version))
+		return latest, fmt.Errorf("the %s is the latest version", version)
 	} else {
 		return latest, errors.New(resp.Status)
 	}
@@ -268,7 +268,7 @@ func getOnlineSum(latest releasesLatest) (string, error) {
 		}
 	}
 
-	return "", errors.New(fmt.Sprintf("%s is not in the %s", name, checkSumsURL))
+	return "", fmt.Errorf("%s is not in the %s", name, checkSumsURL)
 }
 
 func getLocalSum(path string) (string, error) {

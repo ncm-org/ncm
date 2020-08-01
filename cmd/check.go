@@ -123,7 +123,7 @@ func checkType(s string) error {
 			return nil
 		}
 	}
-	return errors.New(fmt.Sprintf("type must be one of [%s]", strings.Join(ts, ", ")))
+	return fmt.Errorf("type must be one of [%s]", strings.Join(ts, ", "))
 }
 
 func checkScope(s string) error {
