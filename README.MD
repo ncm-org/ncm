@@ -60,12 +60,12 @@
 
     ```shell
     # MacOS
-    source /dev/stdin <<<"$(curl -LkSs sh.ncm.ink)"
+    source /dev/stdin <<<"$(curl -LSs sh.ncm.ink)"
     ```
 
     ```shell
     # Linux
-    source <(curl -LkSs sh.ncm.ink)
+    source <(curl -LSs sh.ncm.ink)
     ```
 
     ![ncm install](assets/ncm_install.gif)
