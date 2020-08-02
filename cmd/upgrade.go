@@ -28,7 +28,7 @@ const (
 
 var upgradeCmd = &cobra.Command{
 	Use:   "upgrade",
-	Short: "Upgrader new version",
+	Short: "Upgrade new version",
 	Run: func(cmd *cobra.Command, args []string) {
 		upgrade()
 	},
@@ -50,8 +50,14 @@ func upgrade() {
 		color.Green.Printf("the %s is the latest version\n", version)
 		return
 	}
-
 	color.Green.Printf("new version: %s\n", latest.TagName)
+
+	var asset Asset
+	asset, err = getMatchingAsset(latest)
+	if err != nil {
+		handleError(err)
+		return
+	}
 
 	var appPath string
 	appPath, err = getAppPath()
@@ -65,18 +71,18 @@ func upgrade() {
 		_ = os.Remove(zipPath)
 	}()
 
-	err = downloadLastestVersion(latest, zipPath, func() {
-		downloadSuccess(latest, zipPath, appPath)
+	err = downloadLatestVersion(asset, zipPath, func() {
+		downloadSuccess(asset, latest.TagName, zipPath, appPath)
 	})
 	if err != nil {
 		handleError(err)
 	}
 }
 
-func getLatestVersion() (releasesLatest, error) {
+func getLatestVersion() (LatestVersion, error) {
 	var err error
 	var req *http.Request
-	var latest releasesLatest
+	var latest LatestVersion
 	req, err = http.NewRequest(http.MethodGet, latestReleasesURL, nil)
 	if err != nil {
 		return latest, err
@@ -107,24 +113,20 @@ func getLatestVersion() (releasesLatest, error) {
 	}
 }
 
-func getDownloadURL(latest releasesLatest) string {
+func getMatchingAsset(latest LatestVersion) (Asset, error) {
 	for _, asset := range latest.Assets {
 		if strings.Contains(asset.BrowserDownloadURL, runtime.GOOS) && strings.Contains(asset.BrowserDownloadURL, runtime.GOARCH) {
-			return asset.URL
+			return asset, nil
 		}
 	}
-	return ""
+	return Asset{}, fmt.Errorf("there is no asset matching %s %s", runtime.GOOS, runtime.GOARCH)
 }
 
-func downloadLastestVersion(latest releasesLatest, savePath string, completed func()) error {
-	var downloadURL = getDownloadURL(latest)
-	if len(downloadURL) == 0 {
-		return errors.New("download url is invaild")
-	}
-
+func downloadLatestVersion(asset Asset, savePath string, completed func()) error {
 	var err error
+
 	var req *http.Request
-	req, err = http.NewRequest(http.MethodGet, downloadURL, nil)
+	req, err = http.NewRequest(http.MethodGet, asset.URL, nil)
 	if err != nil {
 		return err
 	}
@@ -157,7 +159,7 @@ func downloadLastestVersion(latest releasesLatest, savePath string, completed fu
 		progressbar.OptionShowCount(),
 		progressbar.OptionShowBytes(true),
 		progressbar.OptionEnableColorCodes(true),
-		progressbar.OptionSetDescription(fmt.Sprintf("downloading: %s", latest.Name)),
+		progressbar.OptionSetDescription("downloading: "),
 		progressbar.OptionOnCompletion(completed),
 	)
 	_, err = io.Copy(io.MultiWriter(f, bar), resp.Body)
@@ -169,14 +171,14 @@ func downloadLastestVersion(latest releasesLatest, savePath string, completed fu
 // 2. rename download files, remove `_temp` suffix
 // 3. delete `app_bak` file
 // 4. if any error, remove `.bak` suffix
-func downloadSuccess(latest releasesLatest, zipPath string, appPath string) {
+func downloadSuccess(asset Asset, version string, zipPath string, appPath string) {
 	fmt.Println()
-	color.Green.Println("download success")
+	color.Green.Println("download successfully")
 
 	color.Green.Println("checksum ...")
 	var err error
 	var onlineSum string
-	onlineSum, err = getOnlineSum(latest)
+	onlineSum, err = getOnlineSum(asset, version)
 	if err != nil {
 		handleError(err)
 		return
@@ -219,30 +221,21 @@ func downloadSuccess(latest releasesLatest, zipPath string, appPath string) {
 
 	// remove _temp suffix from download files
 	for _, f := range fs {
-		newpath := f[:(len(f) - len("_temp"))]
-		err = os.Rename(f, newpath)
+		newPath := f[:(len(f) - len("_temp"))]
+		err = os.Rename(f, newPath)
 		if err != nil {
-			// unrename the app
+			// unRename the app
 			_ = os.Rename(appBakPath, appPath)
 			handleError(err)
 			return
 		}
 	}
 
-	color.Green.Printf("successfully upgraded to %s\n", latest.TagName)
+	color.Green.Println("upgrade successfully")
 }
 
-func getDownloadName(latest releasesLatest) string {
-	for _, asset := range latest.Assets {
-		if strings.Contains(asset.BrowserDownloadURL, runtime.GOOS) && strings.Contains(asset.BrowserDownloadURL, runtime.GOARCH) {
-			return asset.Name
-		}
-	}
-	return ""
-}
-
-func getOnlineSum(latest releasesLatest) (string, error) {
-	checkSumsURL := fmt.Sprintf("https://github.com/ncm-org/ncm/releases/download/%s/checksums.txt", latest.TagName)
+func getOnlineSum(asset Asset, version string) (string, error) {
+	checkSumsURL := fmt.Sprintf("https://github.com/ncm-org/ncm/releases/download/%s/checksums.txt", version)
 	resp, err := http.Get(checkSumsURL)
 	if err != nil {
 		return "", err
@@ -259,16 +252,15 @@ func getOnlineSum(latest releasesLatest) (string, error) {
 		return "", err
 	}
 
-	var name = getDownloadName(latest)
 	var result = string(bs)
 	var sums = strings.Split(result, "\n")
 	for _, sum := range sums {
-		if strings.Contains(sum, name) {
+		if strings.Contains(sum, asset.Name) {
 			return strings.Split(sum, " ")[0], nil
 		}
 	}
 
-	return "", fmt.Errorf("%s is not in the %s", name, checkSumsURL)
+	return "", fmt.Errorf("%s is not in the %s", asset.Name, checkSumsURL)
 }
 
 func getLocalSum(path string) (string, error) {
@@ -309,8 +301,8 @@ func unzip(path string) ([]string, error) {
 
 		var dst *os.File
 		var path = fmt.Sprintf("%s/%s_temp", filepath.Dir(path), f.Name)
-		var newpath = filepath.FromSlash(path)
-		dst, err = os.Create(newpath)
+		var newPath = filepath.FromSlash(path)
+		dst, err = os.Create(newPath)
 		if err != nil {
 			return nil, err
 		}
