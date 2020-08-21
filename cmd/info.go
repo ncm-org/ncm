@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"runtime"
+
 	"github.com/gookit/color"
 	"github.com/spf13/cobra"
 )
@@ -21,6 +23,8 @@ var infoCmd = &cobra.Command{
 }
 
 func printInfo() {
+	color.Green.Printf("     os: %s\n", runtime.GOOS)
+	color.Green.Printf("   arch: %s\n", runtime.GOARCH)
 	color.Green.Printf("   date: %s\n", parseReleaseDate(date))
 	color.Green.Printf(" commit: %s\n", commit)
 	color.Green.Printf(" author: %s\n", author)
