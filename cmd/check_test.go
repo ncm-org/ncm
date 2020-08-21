@@ -1,8 +1,9 @@
 package cmd
 
 import (
-	"github.com/gookit/color"
 	"testing"
+
+	"github.com/gookit/color"
 )
 
 func TestCheckCase1(t *testing.T) {
@@ -127,6 +128,14 @@ func TestCheckCaseForMergeCommitMessage2(t *testing.T) {
 
 func TestCheckCaseForMergeCommitMessage3(t *testing.T) {
 	message := "Merge branch 'develop' into feature_develop"
+	doTestCheckCase(message)
+}
+
+func TestCheckCaseForMergeCommitMessage4(t *testing.T) {
+	message := `Merge remote-tracking branch 'origin/feature_1.2.5' into feature_1.2.5
+			
+	# Conflicts:
+	#	module_base/libs/lmg.aar`
 	doTestCheckCase(message)
 }
 

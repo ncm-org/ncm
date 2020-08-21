@@ -3,11 +3,12 @@ package cmd
 import (
 	"errors"
 	"fmt"
-	"github.com/spf13/cobra"
 	"io/ioutil"
 	"os"
 	"regexp"
 	"strings"
+
+	"github.com/spf13/cobra"
 )
 
 const errorMessage = `some help: https://www.conventionalcommits.org
@@ -70,6 +71,12 @@ func checkMessage(message string) (errs []error) {
 // https://github.com/conventional-changelog/commitlint/issues/365
 // https://github.com/conventional-changelog/commitlint/issues/417
 func isMergeCommitMessage(message string) bool {
+	// adapt to multiple lines of conflicting merge message, use the first line.
+	// Merge remote-tracking branch 'origin/feature_1.2.5' into feature_1.2.5
+	//
+	//	# Conflicts:
+	//	#	xxx.xx
+	message = strings.Split(message, "\n")[0]
 	pattern := "^((Merge pull request)|(Merge (.*?) into (.*?)|(Merge branch (.*?)))(?:\\r?\\n)*$)"
 	matched, err := regexp.MatchString(pattern, message)
 	return err == nil && matched
