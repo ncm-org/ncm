@@ -1,6 +1,11 @@
 <!--<link rel="stylesheet" type="text/css" href="assets/asciinema-player.css" />-->
 <!--<script src="assets/asciinema-player.js"></script>-->
 
+![GitHub](https://img.shields.io/github/license/ncm-org/ncm)
+![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/ncm-org/ncm)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/ncm-org/ncm)
+![GitHub All Releases](https://img.shields.io/github/downloads/ncm-org/ncm/total)
+
 #### NCM是什么？
 - **N**ice **C**ommit **M**essage
 - 用于校验 `git commit message` 是否合符[`约定式提交`](https://www.conventionalcommits.org/zh-hans/v1.0.0-beta.4/)规范。
